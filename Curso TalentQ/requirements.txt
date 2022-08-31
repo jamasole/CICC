@@ -1,9 +1,0 @@
-# Paquetes requeridos para correr los notebooks
-# Ejecutar desde una consola de comandos
-# >> pip install --upgrade -r requirements.txt
-numpy
-matplotlib
-qiskit
-pylatexenc
-ipywidgets
-pydub

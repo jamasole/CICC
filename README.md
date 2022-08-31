@@ -1,6 +1,7 @@
 # Curso de Introducción a Computación Cuántica
-Este curso, en construcción,  está pensado para introducirse en la Computación Cuántica de un modo práctico. Los notebooks contienen ejercicios y celdas de código para ejercitar los conceptos
-El nivel básico que se asume es el de conocimientos elementales de álgebra y programación elemental en python.
+Este curso, en construcción,  está pensado como una introducción práctica a la Computación Cuántica. Los notebooks contienen ejercicios y celdas de código para poner a prueba la comprensión de los conceptos.
+El nivel  que se asume es el de conocimientos elementales de álgebra y programación en python.
+
 
 
  

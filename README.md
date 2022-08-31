@@ -1,4 +1,6 @@
 # Curso de Introducción a la Computación Cuántica CICC
-Este curso está pensado para introducirse en la Computación Cuántica de un modo practico. Los notebooks contienen ejercicios y celdas de código para ejercitar los conceptos
+Este curso, en construcción,  está pensado para introducirse en la Computación Cuántica de un modo práctico. Los notebooks contienen ejercicios y celdas de código para ejercitar los conceptos
+El nivel básico que se asume es el de conocimientos elementales de álgebra y programación elemental en python.
+
 
  

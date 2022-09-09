@@ -1,6 +1,8 @@
 import numpy as np
+from scipy import linalg 
 from IPython.display import display,Markdown,Latex
 import matplotlib.pyplot as plt
+
 
 
 ##############################################################################################################
@@ -89,6 +91,13 @@ def draw_vector(x=1,y=0,vname="v",show_name=False,vcolor="b",sides=False,side_co
     if sides:
         draw_sides(x,y,side_color)
 
+def plot_complex_number(z,show_name=False,vcolor="b",sides=False,side_color="b",lwidth=1):
+     x = z.real
+     y = z.imag        
+     plot_2D_plane(left=-int(abs(x))-1,right=int(abs(x))+1,up=int(abs(y))+1,down=-int(abs(y))-1,fsize=(8,8))
+     draw_vector(x=x,y=y,vname=False,show_name=False,vcolor="b",sides=False,side_color="b",lwidth=1)
+
+    
 def place_text(x,y,text,tcolor="blue"):
     plt.text(x,y,text,color=tcolor)
     
@@ -124,3 +133,19 @@ def Expande_Ket(u):
     display(Markdown(a))
 
 
+'para cambiar el color de las celdas'
+from IPython.core.magic import register_line_magic
+from IPython.display import HTML, display
+import json
+
+@register_line_magic
+def bg(color, cell=None):    
+    script = (
+        "var n = [this.closest('.cell,.jp-CodeCell')];"
+        "n = n.concat([].slice.call(n[0].querySelectorAll('.input_area,.highlight,.jp-Editor')));"
+        f"n.forEach(e=>e.style.background='{color}');"
+        "this.parentNode.removeChild(this)"
+    )
+    display(HTML(f'<img src onerror="{script}" style="display:none">'))  
+
+# use for example %bg rgba(0, 160, 120,0.05) in a cell

@@ -133,6 +133,12 @@ def Expande_Ket(u):
     display(Markdown(a))
 
 
+def Norm(uket):   
+    ubra =uket.conj().T
+    norma = np.sqrt(np.dot(ubra,uket)[0,0]).real 
+    return norma    
+
+    
 'para cambiar el color de las celdas'
 from IPython.core.magic import register_line_magic
 from IPython.display import HTML, display
@@ -149,3 +155,63 @@ def bg(color, cell=None):
     display(HTML(f'<img src onerror="{script}" style="display:none">'))  
 
 # use for example %bg rgba(0, 160, 120,0.05) in a cell
+
+
+# función que calcula distribución de probabilidades a partir de un diccionario de cuentas
+
+def probs_amps(cuentas): # frecuencias_dict es un diccionario con la estadística de resultados
+    
+    prob_dict=cuentas.copy() # vamos a modificar el diccionario "cuentas" con las probabilidades 
+    amp_dict=cuentas.copy()  # y las amplitudes
+    keys = list(cuentas.keys())
+    values = list(cuentas.values())
+    
+    N=sum(values)
+    probabilidades = [v/N for v in values] # lista de frecuencias relativas
+ 
+    for i in range(len(keys)):
+        prob_dict[keys[i]]= probabilidades[i]
+        amp_dict[keys[i]] = np.sqrt(probabilidades[i]) #las amplitudes, sólo en valor absoluto, las fases no son accesibles
+    
+    return  prob_dict, amp_dict
+
+
+# función que calcula el valor esperado de ZZ..Z para un circuito de n cúbits 
+
+def val_esp_sigma(cuentas):
+    probs, amps = probs_amps(cuentas)
+#    print(probs)
+
+    media = 0
+    varianza = 0
+
+    for bitstring,  prob  in probs.items():
+        media += (-1)**(sum([int(bit) for bit in bitstring])) * prob 
+
+    for bitstring,  prob  in probs.items():
+        varianza += ((-1)**(sum([int(bit) for bit in bitstring]))-media)**2 * prob 
+    
+    sigma = np.round(np.sqrt(varianza),5)
+    
+    return media, sigma
+
+
+# funcion que añade una serie de medidores en la base asociada a una cadena de Pauli
+
+def add_Pauli_measurement(qc,paulistring):
+
+    assert(qc.num_qubits==len(paulistring))
+
+    for i,basis in enumerate(paulistring):
+        if  basis == 'X':
+            qc.h(i)    
+            qc.measure(i, i)
+        elif basis == 'Z':
+            qc.measure(i, i)
+            pass    
+        elif basis == 'Y':
+            qc.sdg(i)
+            qc.h(i)
+            qc.measure(i, i)
+
+    return qc 

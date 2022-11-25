@@ -2,6 +2,9 @@ import numpy as np
 from scipy import linalg 
 from IPython.display import display,Markdown,Latex
 import matplotlib.pyplot as plt
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
+
+
 
 
 
@@ -215,3 +218,41 @@ def add_Pauli_measurement(qc,paulistring):
             qc.measure(i, i)
 
     return qc 
+
+
+# funcion que incorpora un funcion binaria como una puerta partir de una tabla de valores de salida 
+
+def binary_function(f_outputs): 
+ 
+    from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
+    from qiskit.circuit.library import MCXGate
+
+    #claramente el número de n-bits de entrada tiene que ser tal que 2^n sea el número de salidas de f
+    n = int(np.log2(len(f_outputs)))
+    
+    #sin embargo los outputs pueden tener longitud arbitraria
+    m = len(f_outputs[0])
+    
+    #generamos todos los posibles inputs en binacio, completando con ceros hasta tener strings de n bits
+    inputs = [format(i, 'b').zfill(n) for i in range(2**n)]
+    # verificamos que hay tantos outputs como posibles inputs 
+    assert len(inputs) == len(f_outputs)
+
+    qr_input = QuantumRegister(n)
+    qr_output = QuantumRegister(m)
+    qc = QuantumCircuit(qr_input, qr_output)
+
+
+    # Hacemos un bucle sobre los inputs
+    for i,input_str in enumerate(inputs):
+        ctrl_state= int(input_str[::-1],2)
+
+        # Para cada input, i, haz un bucle sobre cada  cúbit del output     
+        for j,output_bit in enumerate(f_outputs[i]):
+###
+            if output_bit =='1':
+                qc.append(MCXGate(len(input_str), ctrl_state=ctrl_state),qr_input[:]+[qr_output[j]])
+#  
+###
+
+    return qc

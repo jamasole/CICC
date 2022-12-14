@@ -227,16 +227,16 @@ def binary_function(f_outputs):
     from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
     from qiskit.circuit.library import MCXGate
 
-    #claramente el número de n-bits de entrada tiene que ser tal que 2^n sea el número de salidas de f
-    n = int(np.log2(len(f_outputs)))
+    #claramente el número de n-bits de entrada tiene que ser tal que 2^n acomode el número de salidas de f
+    n = int(np.ceil(np.log2(len(f_outputs))))
     
     #sin embargo los outputs pueden tener longitud arbitraria
     m = len(f_outputs[0])
     
-    #generamos todos los posibles inputs en binacio, completando con ceros hasta tener strings de n bits
+    #generamos todos los posibles inputs en binario, completando con ceros hasta tener strings de n bits
     inputs = [format(i, 'b').zfill(n) for i in range(2**n)]
     # verificamos que hay tantos outputs como posibles inputs 
-    assert len(inputs) == len(f_outputs)
+    # assert len(inputs) == len(f_outputs)
 
     qr_input = QuantumRegister(n)
     qr_output = QuantumRegister(m)
@@ -244,15 +244,49 @@ def binary_function(f_outputs):
 
 
     # Hacemos un bucle sobre los inputs
-    for i,input_str in enumerate(inputs):
-        ctrl_state= int(input_str[::-1],2)
+    for i,input_str in enumerate(inputs[:len(f_outputs)]):
+        ctrl_state= int(input_str[::],2)
 
-        # Para cada input, i, haz un bucle sobre cada  cúbit del output     
+        # Para cada input, i, hacemos un bucle sobre cada  cúbit del output     
         for j,output_bit in enumerate(f_outputs[i]):
 ###
             if output_bit =='1':
-                qc.append(MCXGate(len(input_str), ctrl_state=ctrl_state),qr_input[:]+[qr_output[j]])
+                qc.append(MCXGate(len(input_str), ctrl_state=ctrl_state),qr_input[:]+[qr_output[n-j-1]])
 #  
 ###
 
     return qc
+
+           
+
+# funcion genera una transformada de Fourier Cuántica
+
+def TFC(n):
+    qc = QuantumCircuit(n)    
+
+    for j in reversed(range(n)):
+        qc.h(j)
+        for k in range(j):
+            qc.cp(np.pi/2**(j-k), k, j)
+    for j in range(n//2):
+        qc.swap(j,n-j-1)
+
+    return qc.to_gate(label='TFC')
+        
+def TFC_adj(n):
+    qc = QuantumCircuit(n)    
+
+    for j in reversed(range(n//2)):
+        qc.swap(j,n-j-1)            
+    for j in range(n):
+        for k in reversed(range(j)):
+            qc.cp(-2*np.pi/2**(j-k+1), k, j)
+        qc.h(j)
+
+    return qc.to_gate(label='TFC_adj')
+
+
+def swap_registers(circuit, n):
+    for qubit in range(n//2):
+        circuit.swap(qubit, n-qubit-1)
+    return circuit
